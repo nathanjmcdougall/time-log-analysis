@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-from columns import DT_COLS, DURATION_COL, FROM_COL, TO_COL
+from column import DT_COLS, DURATION_COL, FROM_COL, TO_COL
 
 
 def _pre_blank_line(blank_lines_df: DataFrame) -> DataFrame:
