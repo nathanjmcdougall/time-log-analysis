@@ -1,21 +1,11 @@
-import os
-from pathlib import Path
+from os import PathLike
+from typing import Any
 
 import numpy as np
 import pandas as pd
-from dotenv import load_dotenv
 from pandas import DataFrame
 
 from columns import DT_COLS, DURATION_COL, FROM_COL, TO_COL
-
-
-def _get_csv_path(env_name: str = "TIMELOG_REPORT_CSV_PATH") -> Path:
-    load_dotenv()
-    path_str = os.getenv(env_name)
-    if path_str is None:
-        raise KeyError(f"{env_name} is not set")
-    path = Path(path_str)
-    return path
 
 
 def _pre_blank_line(blank_lines_df: DataFrame) -> DataFrame:
@@ -25,9 +15,8 @@ def _pre_blank_line(blank_lines_df: DataFrame) -> DataFrame:
     return preblank_df
 
 
-def get_time_log_df() -> DataFrame:
+def get_time_log_df(csv_path: PathLike[Any]) -> DataFrame:
     """Read-in the time log csv file as a DataFrame with sensible dtypes."""
-    csv_path = _get_csv_path()
     single_blank_line_df = pd.read_csv(csv_path)
     df = _pre_blank_line(single_blank_line_df)
 
