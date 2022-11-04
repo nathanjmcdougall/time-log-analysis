@@ -17,7 +17,7 @@ def _pre_blank_line(blank_lines_df: DataFrame) -> DataFrame:
 
 def get_time_log_df(csv_path: PathLike[Any]) -> DataFrame:
     """Read-in the time log csv file as a DataFrame with sensible dtypes."""
-    single_blank_line_df = pd.read_csv(csv_path)
+    single_blank_line_df = pd.read_csv(csv_path, skip_blank_lines=False)
     df = _pre_blank_line(single_blank_line_df)
 
     df[DT_COLS] = df[DT_COLS].apply(pd.to_datetime, format=str("%Y-%m-%d %H:%M"))
