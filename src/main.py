@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.dates as mdates
 import datetime
 import random
+from matplotlib.ticker import PercentFormatter
 
 from column import DURATION_COL, FROM_COL, TO_COL, ACTIVITY_COL
 from data import get_time_log_df
@@ -171,6 +172,106 @@ if __name__ == "__main__":
     ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), title="Activity")
 
     plt.savefig("plot_daily.png", bbox_inches="tight", dpi=350)
+    plt.show()
+
+    ## Now do the same but don't plot a time but a stacked bar chart showing the average
+    ## time spent on every day up to that point
+    fig, ax = plt.subplots(figsize=(40, 10))
+    templ_plot_df = plot_df.copy()
+    MIN_COL = "minutes"
+    templ_plot_df[MIN_COL] = templ_plot_df[DURATION_COL].dt.seconds / SEC_PER_MIN
+    template_contrib = templ_plot_df.groupby(plot_df[FROM_COL].dt.date)[MIN_COL].sum()
+    total_minutes = template_contrib.cumsum()
+    bottom = 0
+    for color, activity in zip(colors, top_activities.tolist() + ["Other"]):
+        this_df = templ_plot_df.loc[plot_df[ACTIVITY_COL] == activity].copy()
+        contrib = this_df.groupby(this_df[FROM_COL].dt.date)[MIN_COL].sum()
+        contrib = (
+            contrib.reindex(template_contrib.index, fill_value=0).cumsum()
+            / total_minutes
+        )
+        plt.bar(
+            contrib.index,
+            contrib,
+            width=1,
+            bottom=bottom,
+            label=activity,
+            color=color,
+        )
+        bottom += contrib
+
+    # Y-axis labels
+    # Percentage formatting
+    ax.set_ylim(0, 1)
+    ytickformatter = PercentFormatter(xmax=1)
+    ax.yaxis.set_major_formatter(ytickformatter)
+    ax.set_ylabel("Percentage of total time")
+
+    # X-axis
+    half_day = datetime.timedelta(hours=12)
+    ax.set_xlim(start_date - half_day, end_date + half_day)
+    ax.set_xlabel("Date")
+
+    # legend to the right of the graph, centred vertically
+    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), title="Activity")
+
+    plt.savefig("plot_cumulative.png", bbox_inches="tight", dpi=350)
+    plt.show()
+
+    ## Now do the same but instead of a cumulative total from the very beginning, just
+    # The last 30 day
+    fig, ax = plt.subplots(figsize=(40, 10))
+    templ_plot_df = plot_df.copy()
+    MIN_COL = "minutes"
+    templ_plot_df[MIN_COL] = templ_plot_df[DURATION_COL].dt.seconds / SEC_PER_MIN
+    template_contrib = templ_plot_df.groupby(plot_df[FROM_COL].dt.date)[MIN_COL].sum()
+    template_contrib.index = pd.to_datetime(template_contrib.index)
+    total_minutes = template_contrib.rolling("30D").sum()
+    bottom = 0
+    top_activities_without_work = top_activities.tolist().copy()
+    top_activities_without_work.remove("Work")
+    work_idx = top_activities.tolist().index("Work")
+    colors_without_work = colors.tolist()
+    colors_without_work = (
+        colors_without_work[:work_idx] + colors_without_work[work_idx + 1 :]
+    )
+    synced_colors = colors_without_work + [colors[work_idx]]
+    synced_activities = top_activities_without_work + ["Work", "Other"]
+
+    for color, activity in zip(synced_colors, synced_activities):
+
+        this_df = templ_plot_df.loc[plot_df[ACTIVITY_COL] == activity].copy()
+        contrib = this_df.groupby(this_df[FROM_COL].dt.date)[MIN_COL].sum()
+        contrib = (
+            contrib.reindex(template_contrib.index, fill_value=0).rolling("30D").sum()
+            / total_minutes
+        )
+        plt.bar(
+            contrib.index,
+            contrib,
+            width=1,
+            bottom=bottom,
+            label=activity,
+            color=color,
+        )
+        bottom += contrib
+
+    # Y-axis labels
+    # Percentage formatting
+    ax.set_ylim(0, 1)
+    ytickformatter = PercentFormatter(xmax=1)
+    ax.yaxis.set_major_formatter(ytickformatter)
+    ax.set_ylabel("Percentage of total time")
+
+    # X-axis
+    half_day = datetime.timedelta(hours=12)
+    ax.set_xlim(start_date - half_day, end_date + half_day)
+    ax.set_xlabel("Date")
+
+    # legend to the right of the graph, centred vertically
+    ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), title="Activity")
+
+    plt.savefig("plot_cumulative_monthly.png", bbox_inches="tight", dpi=350)
     plt.show()
 
     # Now do the same thing but based on week
