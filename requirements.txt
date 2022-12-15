@@ -1,0 +1,19 @@
+numpy
+pandas
+python-dotenv
+seaborn
+scipy
+matplotlib
+
+# Code checks
+black
+pylint
+isort
+pre-commit
+
+# Tests
+pytest
+pytest-cov
+
+# Notebooks
+ipykernel

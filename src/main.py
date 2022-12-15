@@ -1,17 +1,15 @@
+import datetime
+import warnings
 from numbers import Number
 from typing import Collection
+
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import pareto
-import warnings
-import seaborn as sns
 import pandas as pd
-import matplotlib.dates as mdates
-import datetime
-import random
 from matplotlib.ticker import PercentFormatter
+from scipy.stats import pareto
 
-from column import DURATION_COL, FROM_COL, TO_COL, ACTIVITY_COL
+from column import ACTIVITY_COL, DURATION_COL, FROM_COL, TO_COL
 from data import get_time_log_df
 from path import get_csv_path
 

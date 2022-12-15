@@ -1,8 +1,10 @@
 # Time Log Analysis
 
+## Introduction
+
 Earlier this year I started keeping track of my time using an Android app called aTimeLogger by [Sergei Zaplitny](https://github.com/zaplitny):
 
-http://www.atimelogger.com/
+<http://www.atimelogger.com/>
 
 It keeps track of when you start and stop working on a task, and then you can export the data to a CSV file with two tables with an empty line separating them:
 
@@ -24,3 +26,6 @@ This repo contains some scripts to read-in this CSV and generate a report. I ign
 
 The app lets you track multiple tasks simulataneously, but I never do that, do this script assumes that task durations don't overlap in time.
 
+## Getting started
+
+Create a `.env` file from the template. Use Python 3.11.0.
