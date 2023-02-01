@@ -24,7 +24,7 @@ It keeps track of when you start and stop working on a task, and then you can ex
 
 This repo contains some scripts to read-in this CSV and generate a report. I ignore the second table and just use the first.
 
-The app lets you track multiple tasks simulataneously, but I never do that, do this script assumes that task durations don't overlap in time.
+The app lets you track multiple tasks simulataneously, but I never do that, so this script assumes that task durations don't overlap in time.
 
 ## Getting started
 
