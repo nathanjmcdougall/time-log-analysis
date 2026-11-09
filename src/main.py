@@ -283,7 +283,8 @@ if __name__ == "__main__":
             + this_df[FROM_COL].dt.minute
         )
         plt.bar(
-            this_df[FROM_COL].dt.isocalendar().week,
+            this_df[FROM_COL].dt.isocalendar().week
+            + (this_df[FROM_COL].dt.year - start_date.year) * 52,
             this_df[DURATION_COL].dt.seconds / SEC_PER_MIN,
             width=1,
             bottom=bottom,
@@ -304,7 +305,12 @@ if __name__ == "__main__":
     ax.invert_yaxis()
 
     # X-axis
-    ax.set_xlim(start_date.isocalendar().week - 1, end_date.isocalendar().week + 1)
+    ax.set_xlim(
+        start_date.isocalendar().week - 1,
+        end_date.isocalendar().week
+        + (end_date.year - start_date.year) * 52
+        + 1,  # TODO we don't always have 52 weeks in a year
+    )
     ax.set_xlabel("Week of Year")
 
     # legend to the right of the graph, centred vertically
